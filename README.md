@@ -29,5 +29,3 @@ Run app with:
 ```bash
 npm run dev
 ```
-# zkemail.nr-broswer-benches
-# zkemail.nr-broswer-benches

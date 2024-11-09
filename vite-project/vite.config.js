@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import copy from 'rollup-plugin-copy';
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import fs from 'fs';
 import path from 'path';
 
@@ -50,6 +51,7 @@ export default defineConfig(({ command }) => {
                     });
                     },
                 },
+            nodePolyfills(),
             ],
         };
     }

@@ -1,3 +1,5 @@
 circuit/*/target/*.json
 node_modules
 .vscode
+witness.gz
+*.proof

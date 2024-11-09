@@ -63,8 +63,7 @@ const proveBackend = async (proveWith) => {
   });
 
   console.log(
-    `Benching ${proveWith} for ${iterations} iteration${
-      iterations === 1 ? '' : 's'
+    `Benching ${proveWith} for ${iterations} iteration${iterations === 1 ? '' : 's'
     }... ⏳\n\n`
   );
   // do cold start proof
@@ -76,8 +75,7 @@ const proveBackend = async (proveWith) => {
   for (let i = 1; i < iterations; i++) {
     updateTotalTime(totalTimeAgg, await prove(backend, inputs));
     console.log(
-      `Benched ${i + 1} iteration${
-        i + 1 === 1 ? '' : 's'
+      `Benched ${i + 1} iteration${i + 1 === 1 ? '' : 's'
       } of ${iterations} for ${proveWith}... ⏳`,
     );
   }
@@ -98,8 +96,8 @@ const updateTotalTime = (total, iteration) => {
 };
 
 const main = async () => {
-    await proveBackend("honk");
-    await proveBackend("plonk");
+  await proveBackend("honk");
+  await proveBackend("plonk");
 }
 
 main();

@@ -11,7 +11,7 @@ Benchmarking repository for [ZKEmail.nr](https://github.com/zkemail/zkemail.nr)
 | 10x avg    | 18.93s          | 9.67s          | 14.63s         | 5.87s         | 6.81s          | 2.51s         |
 | Witcalc    | 2.27s           |  <---          | 1.37s          |  <---         | 2.43s          | <---          |  
 
-
+Keep in mind that most of cold start cost can be hidden from user if proving backend is initialized eagerly on page load before user reaches proving UX
 
 ## Running Benchmarks yourself
 

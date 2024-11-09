@@ -1,8 +1,7 @@
 {
-  "name": "vite-project",
+  "name": "zkemail-browser-bench",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,7 +12,10 @@
     "vite": "^5.3.4"
   },
   "dependencies": {
-    "@noir-lang/backend_barretenberg": "^0.33.0",
-    "@noir-lang/noir_js": "^0.33.0"
+    "@zk-email/zkemail-nr": "1.2.2",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "@noir-lang/backend_barretenberg": "=0.35.0",
+    "@noir-lang/noir_js": "=0.35.0",
+    "@noir-lang/noirc_abi": "^0.35.0"
   }
 }

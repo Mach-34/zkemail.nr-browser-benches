@@ -1,31 +1,52 @@
-# Tiny NoirJS app
+# ZKEmail.nr Benchmarks
 
-This repo contains the full code from [this](https://noir-lang.org/docs/tutorials/noirjs_app) Noir docs page.
+M1 Mac 16 gb memory
 
-## Noir project
+## Browser
+10 iterations
 
-Uses `nargo` version 0.31.0.
+### Plonk
 
-Recompile with
+#### Cold Start (I.e. has to download srs)
 
-```bash
-nargo compile
+```
+Proof time:
 ```
 
-## Vite project
+#### Average warm
+```
+Witness Calculation
 
-```bash
-cd vite-project
+
+## Running Benchmarks yourself
+Run `./artifact.sh` to recompile the circuit to start off.
+
+### Browser (Wasm)
+```console
+cd browser
+yarn
+yarn dev
+# Click the buttons to prove plonk or honk and see output
 ```
 
-Install dependencies with
-
-```bash
-npm install
+### NodeJS (Wasm)
+```console
+cd node
+yarn
+yarn start
 ```
 
-Run app with:
+### Native
+```console
+## If you want to rebuild the Prover.toml do this, otherwise skip...
+cd browser
+yarn
+yarn gen_prover_toml
+cd ..
 
-```bash
-npm run dev
+# Run Plonk Test (1 iteration)
+./native_plonk.sh
+
+# Run Honk Test (1 iteration)
+./native_honk.sh
 ```

@@ -29,12 +29,7 @@ const calcAvg = (aggTime, iterations) => {
   };
 };
 
-const prove = async (proveWith, inputs) => {
-  const threads = window.navigator.hardwareConcurrency;
-  console.log(`Using ${threads} threads`);
-  const backend = proveWith === 'honk'
-    ? new UltraHonkBackend(circuit)
-    : new BarretenbergBackend(circuit, { threads });
+const prove = async (backend, inputs) => {
 
   const start = new Date().getTime() / 1000;
   console.log("executing witness")
@@ -53,8 +48,14 @@ const prove = async (proveWith, inputs) => {
   };
 };
 
-const proveBackend = async (backend) => {
+const proveBackend = async (proveWith) => {
   const iterations = 5;
+
+  const threads = window.navigator.hardwareConcurrency;
+  console.log(`Using ${threads} threads`);
+  const backend = proveWith === 'honk'
+    ? new UltraHonkBackend(circuit)
+    : new BarretenbergBackend(circuit, { threads });
 
   const totalTimeAgg = {
     proofGenerationTime: 0,
@@ -74,7 +75,7 @@ const proveBackend = async (backend) => {
 
   let prevDisplay = display(
     'logs',
-    `Benching ${backend} for ${iterations} iteration${
+    `Benching ${proveWith} for ${iterations} iteration${
       iterations === 1 ? '' : 's'
     }... ⏳\n\n`
   );
@@ -91,10 +92,12 @@ const proveBackend = async (backend) => {
       'logs',
       `Benched ${i + 1} iteration${
         i + 1 === 1 ? '' : 's'
-      } of ${iterations} for ${backend}... ⏳`,
+      } of ${iterations} for ${proveWith}... ⏳`,
       prevDisplay 
     );
   }
+
+  backend.destroy();
 
   const avg = calcAvg(totalTimeAgg, iterations);
   display('logs', `Witness generation time: ${avg.witnessGenerationTime}s ✅`);

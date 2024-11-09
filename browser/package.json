@@ -1,5 +1,5 @@
 {
-  "name": "vite-project",
+  "name": "zkemail-browser-bench",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -12,7 +12,6 @@
     "vite": "^5.3.4"
   },
   "dependencies": {
-    "@shieldswap/vite-plugin-aztec": "^0.0.2",
     "@zk-email/zkemail-nr": "1.2.2",
     "vite-plugin-node-polyfills": "^0.22.0",
     "@noir-lang/backend_barretenberg": "=0.35.0",

@@ -1,5 +1,7 @@
 #!/bin/bash
-cd circuit
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+cd $SCRIPT_DIR/circuit
+
 ## Set the date utility depending on OSX or Linix
 if command -v gdate &> /dev/null
 then

@@ -1,32 +1,22 @@
-// import circuit from '../target/zkemail_test.json';
-import circuit from '../rsa_2048/target/rsa_2048.json';
+import circuit from '../circuit/target/noir_zkemail_benchmarks.json' assert { type: 'json' };
 import { UltraHonkBackend, UltraPlonkBackend } from '@aztec/bb.js';
 import { Noir } from '@noir-lang/noir_js';
-import {
-  generateEmailVerifierInputsFromDKIMResult,
-  verifyDKIMSignature,
-} from '@zk-email/zkemail-nr';
+import { generateEmailVerifierInputs } from '@zk-email/zkemail-nr';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
-import initNoirC from '@noir-lang/noirc_abi';
-import initACVM from '@noir-lang/acvm_js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const noir = new Noir(circuit);
+const email = readFileSync(join(__dirname, './email-good-large.eml'));
 
 const inputParams = {
-  maxHeadersLength: 576,
-  extractFrom: true,
+  maxHeadersLength: 512,
+  maxBodyLength: 1024,
 };
 
-const display = (container, msg, elementToRemove) => {
-  const c = document.getElementById(container);
-  if (elementToRemove) {
-    c.removeChild(elementToRemove);
-  }
-  const p = document.createElement('p');
-  p.textContent = msg;
-  c.appendChild(p);
-  return p;
-};
+const noir = new Noir(circuit);
 
 const calcAvg = (aggTime, iterations) => {
   return {
@@ -37,62 +27,10 @@ const calcAvg = (aggTime, iterations) => {
   };
 };
 
-const handleInput = (event) => {
-  const inputElement = event.target;
-  const value = inputElement.value;
-  const numericValue = value.replace(/[^0-9]/g, '');
-
-  if (numericValue === '0') {
-    inputElement.value = 1;
-  } else {
-    inputElement.value = numericValue;
-  }
-
-  const ultraHonkBtn = document.getElementById('proveUltraHonk');
-  const ultraPlonkBtn = document.getElementById('proveUltraPlonk');
-  // if input is empty then disable buttons
-  if (numericValue.trim() === '') {
-    ultraHonkBtn.disabled = true;
-    ultraPlonkBtn.disabled = true;
-  } else {
-    ultraHonkBtn.disabled = false;
-    ultraPlonkBtn.disabled = false;
-  }
-};
-
-const generateInputs = async () => {
-  const email = await fetch('./email-good-large.eml');
-  const emailBuffer = await email.arrayBuffer();
-  const dkimResult = await verifyDKIMSignature(Buffer.from(emailBuffer));
-  const baseInputs = await generateEmailVerifierInputsFromDKIMResult(
-    dkimResult,
-    {
-      maxHeadersLength: 512,
-      maxBodyLength: 1024,
-    }
-  );
-
-  // determine date sequence
-  const header = dkimResult.headers.toString();
-  const dateField = /[Dd]ate:.*\r?\n/.exec(header);
-  const subjectField = /[Ss]ubject:.*\r?\n/.exec(header);
-
-  return {
-    subject_sequence: {
-      index: String(subjectField.index),
-      length: String(subjectField[0].length - 2), // remove 2 for crlf
-    },
-    date_index: String(dateField.index),
-    ...baseInputs,
-  };
-};
-
 const prove = async (backend, inputs) => {
   const start = new Date().getTime() / 1000;
-  console.log('executing witness');
   const { witness } = await noir.execute(inputs);
   const postWitnessGenerationTime = new Date().getTime() / 1000;
-  console.log('generating proof');
   const proof = await backend.generateProof(witness);
   const postProofGenerationTime = new Date().getTime() / 1000;
   // await backend.verifyProof(proof);
@@ -106,101 +44,52 @@ const prove = async (backend, inputs) => {
 };
 
 const proveBackend = async (proveWith) => {
-  const concurrencyToggle = document.getElementById('concurrencyToggle');
-  const isConcurrencyEnabled = concurrencyToggle.checked;
-  const iterations = Number(document.getElementById('iterations').value);
-
-  // disable buttons while running
-  const proveHonkBtn = document.getElementById('proveUltraHonk');
-  const provePlonkBtn = document.getElementById('proveUltraPlonk');
-  proveHonkBtn.disabled = true;
-  provePlonkBtn.disabled = true;
-
-  const backendOptions = { threads: 0 };
-  if (isConcurrencyEnabled) {
-    const threads = window.navigator.hardwareConcurrency;
-    backendOptions.threads = threads;
-  }
-
-  await Promise.all([
-    initACVM(
-      new URL(
-        '@noir-lang/acvm_js/web/acvm_js_bg.wasm',
-        import.meta.url
-      ).toString()
-    ),
-    initNoirC(
-      new URL(
-        '@noir-lang/noirc_abi/web/noirc_abi_wasm_bg.wasm',
-        import.meta.url
-      ).toString()
-    ),
-  ]);
   const backend =
     proveWith === 'honk'
-      ? new UltraHonkBackend(circuit.bytecode, backendOptions)
-      : new UltraPlonkBackend(circuit.bytecode, backendOptions);
+      ? new UltraHonkBackend(circuit.bytecode)
+      : new UltraPlonkBackend(circuit.bytecode);
+
+  const iterations = 10;
+
   const totalTimeAgg = {
     proofGenerationTime: 0,
     proofVerificationTime: 0,
     totalTime: 0,
     witnessGenerationTime: 0,
   };
-  const inputs = await generateInputs();
-  // clear logs
-  const logs = document.getElementById('logs');
-  logs.innerHTML = '';
-  if (isConcurrencyEnabled) {
-    display(
-      'logs',
-      `Using ${backendOptions.threads} thread${
-        backendOptions.threads > 1 ? 's' : ''
-      } 🧵`
-    );
-  }
-  let prevDisplay = display(
-    'logs',
+
+  const inputs = await generateEmailVerifierInputs(email, inputParams);
+
+  console.log(
     `Benching ${proveWith} for ${iterations} iteration${
       iterations === 1 ? '' : 's'
     }... ⏳\n\n`
   );
   // do cold start proof
   const coldRes = await prove(backend, inputs);
-  display(
-    'logs',
+  console.log(
     `Cold start witness generation time: ${coldRes.witnessGenerationTime}s ✅`
   );
-  display(
-    'logs',
+  console.log(
     `Cold start proof generation time: ${coldRes.proofGenerationTime}s ✅`
   );
-  display('logs', `Cold start total time: ${coldRes.totalTime}s ✅`);
-  prevDisplay = display(
-    'logs',
-    `Benched 1 iteration of ${iterations} for ${proveWith}... ⏳`,
-    prevDisplay
-  );
+  console.log(`Cold start total time: ${coldRes.totalTime}s ✅`);
+
   for (let i = 1; i < iterations; i++) {
-    console.log('iteration: ', i);
     updateTotalTime(totalTimeAgg, await prove(backend, inputs));
-    prevDisplay = display(
-      'logs',
+    console.log(
       `Benched ${i + 1} iteration${
         i + 1 === 1 ? '' : 's'
-      } of ${iterations} for ${proveWith}... ⏳`,
-      prevDisplay
+      } of ${iterations} for ${proveWith}... ⏳`
     );
   }
-  backend.destroy();
-  const avg = calcAvg(totalTimeAgg, iterations);
-  display('logs', `Witness generation time: ${avg.witnessGenerationTime}s ✅`);
-  display('logs', `Proof generation time: ${avg.proofGenerationTime}s ✅`);
-  // display('logs', `Proof verification time: ${avg.proofVerificationTime}s ✅`);
-  display('logs', `Total time: ${avg.totalTime}s ✅`);
 
-  // re-enable buttons
-  proveHonkBtn.disabled = false;
-  provePlonkBtn.disabled = false;
+  backend.destroy();
+
+  const avg = calcAvg(totalTimeAgg, iterations);
+  console.log(`Witness generation time: ${avg.witnessGenerationTime}s ✅`);
+  console.log(`Proof generation time: ${avg.proofGenerationTime}s ✅`);
+  console.log(`Total time: ${avg.totalTime}s ✅`);
 };
 
 const updateTotalTime = (total, iteration) => {
@@ -210,10 +99,9 @@ const updateTotalTime = (total, iteration) => {
   total.witnessGenerationTime += iteration.witnessGenerationTime;
 };
 
-document
-  .getElementById('proveUltraHonk')
-  .addEventListener('click', async () => await proveBackend('honk'));
-document
-  .getElementById('proveUltraPlonk')
-  .addEventListener('click', async () => await proveBackend('plonk'));
-document.getElementById('iterations').addEventListener('input', handleInput);
+const main = async () => {
+  await proveBackend('honk');
+  await proveBackend('plonk');
+};
+
+main();

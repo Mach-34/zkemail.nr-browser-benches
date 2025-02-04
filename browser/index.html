@@ -13,14 +13,42 @@
         margin-top: 24px;
         word-wrap: break-word;
     }
+    .input-area {
+      display: flex;
+
+    }
+    .bench-instructions {
+      align-items: center;
+      display: flex;
+      gap: 16px;
+      margin-left: 48px;
+    }
+
+    .bench-instructions > div {
+      align-items: center;
+      display: flex;
+      gap: 4px;
+    }
   </style>
 </head>
 <body>
   <script type="module" src="/main.js"></script>
-  <h1>Noir app</h1>
+  <h1>Zkemail.nr Header Benches</h1>
   <div class="input-area">
-    <button id="proveUltraHonk">Prove Ultra Honk</button>
-    <button id="proveUltraPlonk">Prove Ultra Plonk</button>
+    <div>
+      <button id="proveUltraHonk" disabled>Prove Ultra Honk</button>
+      <button id="proveUltraPlonk" disabled>Prove Ultra Plonk</button>
+    </div>
+    <div class="bench-instructions">
+      <div>
+        <label for="iterations">Iterations</label>
+        <input id="iterations" placeholder="# iterations"/> 
+      </div>
+      <div>
+        <label for="concurrencyToggle">With concurrency</label>
+        <input id="concurrencyToggle" type="checkbox" />
+      </div>
+    </div>
   </div>
   <div class="outer">
     <div id="logs" class="inner"><h2>Logs</h2></div>

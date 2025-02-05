@@ -10,7 +10,7 @@ Benchmarking repository for [ZKEmail.nr](https://github.com/zkemail/zkemail.nr)
 | Cold Start (Single Thread) | 89.01s          | 19.63s         | 88.26s         | 20.14s         |  N/A           | N/A           |
 | Cold Start (Multithreaded) | **22.10s**          | **6.18s**         | **21.51s**         | **6.47s**         |  N/A           | N/A           |
 | 10x avg (Single Thread)    | 59.50s          | 16.63s          | 59.37s         | 16.90s         | **6.81s**          | **2.51s**         |
-| 10x avg (Multithreaded)    | **12.59s**          | **4.23s**          | **12.72s**         | 4.43s         | N/A          | N/A        |
+| 10x avg (Multithreaded)    | **12.59s**          | **4.23s**          | **12.72s**         | **4.43s**         | N/A          | N/A        |
 | Witcalc    | .75s           |  <---          | .88s          |  <---         | .90s          | <---          |  
 
 Keep in mind that most of cold start cost can be hidden from user if proving backend is initialized eagerly on page load before user reaches proving UX

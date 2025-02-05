@@ -18,6 +18,7 @@ Keep in mind that most of cold start cost can be hidden from user if proving bac
 ## Running Benchmarks yourself
 
 REQUIRES NARGO v1.0.0.beta
+
 REQUIRES BB v0.66.0
 
 Run `./artifact.sh` to recompile the circuit to start off.
@@ -27,7 +28,7 @@ Run `./artifact.sh` to recompile the circuit to start off.
 cd browser
 yarn
 yarn dev
-# Click the buttons to prove plonk or honk and see output
+# Click the buttons to prove plonk or honk and see output. Specify iterations and toggle concurrency on and off
 ```
 
 ### NodeJS (Wasm)

@@ -7,16 +7,18 @@ Benchmarking repository for [ZKEmail.nr](https://github.com/zkemail/zkemail.nr)
 
 |            | Plonk (Browser) | Honk (Browser) | Plonk (NodeJS) | Honk (NodeJS) | Plonk (Native) | Honk (Native) |
 |------------|-----------------|----------------|----------------|---------------|----------------|---------------|
-| Cold Start | 39.94s          | 16.80s         | 25.87s         | 9.32s         |  N/A           | N/A           |
-| 10x avg    | 18.93s          | 9.67s          | 14.63s         | 5.87s         | 6.81s          | 2.51s         |
-| Witcalc    | 2.27s           |  <---          | 1.37s          |  <---         | 2.43s          | <---          |  
+| Cold Start (Single Thread) | 89.01s          | 19.63s         | 88.26s         | 20.14s         |  N/A           | N/A           |
+| Cold Start (Multithreaded) | 22.10s          | 6.18s         | 21.51s         | 6.47s         |  N/A           | N/A           |
+| 10x avg (Single Thread)    | 59.50s          | 16.63s          | 59.37s         | 16.90s         | 6.81s          | 2.51s         |
+| 10x avg (Multithreaded)    | 12.59s          | 4.23s          | 12.72s         | 4.43s         | N/A          | N/A        |
+| Witcalc    | .75s           |  <---          | .88s          |  <---         | .90s          | <---          |  
 
 Keep in mind that most of cold start cost can be hidden from user if proving backend is initialized eagerly on page load before user reaches proving UX
 
 ## Running Benchmarks yourself
 
-REQUIRES NARGO v0.35.0 (2a0d211b92d002fa75855d4ba27267f8892dd52c)
-REQUIRES BB v0.57.0
+REQUIRES NARGO v1.0.0.beta
+REQUIRES BB v0.66.0
 
 Run `./artifact.sh` to recompile the circuit to start off.
 

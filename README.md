@@ -28,7 +28,7 @@ Run `./artifact.sh` to recompile the circuit to start off.
 cd browser
 yarn
 yarn dev
-# Click the buttons to prove plonk or honk and see output. Specify iterations and toggle concurrency on and off
+# Click the buttons to prove plonk or honk and see output. Specify iterations and toggle concurrency on / off
 ```
 
 ### NodeJS (Wasm)
